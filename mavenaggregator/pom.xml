@@ -1,0 +1,192 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com</groupId>
+	<artifactId>mavenaggregator</artifactId>
+
+	<!--  require pom if aggregator -->
+	<packaging>pom</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>my Maven Webapp</name>
+	<url>http://maven.apache.org</url>
+	
+	<modules>
+		<!--  relative paths to the directories of pom -->
+	    <module>my-project</module>
+	    <module>another-project</module>
+	</modules>
+
+	<dependencies>
+		<!-- Test start -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- Test end -->
+	</dependencies>
+
+
+
+	<!-- Build Setting : BaseBuild 或者说是 common build。因环境差异还需要在 profiles 节点里面再指定 -->
+	<!-- declaring your project's directory structure and managing plugins-->
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<!-- findbugs 代码静态分析 -->
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>findbugs-maven-plugin</artifactId>
+					<version>2.4.0</version>
+					<executions>
+						<execution>
+							<phase>package</phase>
+							<goals>
+								<goal>check</goal>
+							</goals>
+						</execution>
+					</executions>
+					<configuration>
+						<failOnError>false</failOnError>
+						<includeTests>false</includeTests>
+						<findbugsXmlOutput>true</findbugsXmlOutput>
+						<findbugsXmlOutputDirectory>target</findbugsXmlOutputDirectory>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<plugin>
+				<!-- 处理资源文件。默认的主资源文件目录是src/main/resources，可以在此指定额外的资源文件目录 -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<!-- 编译Java代码 -->
+				<artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <target>1.8</target>
+                    <source>1.8</source>
+                </configuration>
+			</plugin>
+
+			<plugin>
+				<!-- 单元测试整体覆盖率以及分支覆盖率的统计。生成site\cobertura目录 -->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <formats>
+                    	<!-- 单元测试覆盖率report 两种格式 -->
+                        <format>xml</format>
+                        <format>html</format>
+                    </formats>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>cobertura</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- 在maven构建生命周期的test phase执行一个应用的单元测试 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.19</version>
+				<configuration>
+					<!-- Avoid test failure lead to build fail -->
+					<testFailureIgnore>true</testFailureIgnore>
+					<includes>
+						<include>**/*Test.java</include>
+					</includes>
+					<excludes>
+						<exclude>**/Abstract*.java</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<!-- surefire-reports, 测试执行结果的 report -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>2.20.1</version>
+			</plugin>
+		
+		</plugins>
+
+		<directory>target</directory>
+
+		<resources>  
+	        <resource>  
+	            <directory>src/main/resources</directory>  
+	            <!-- 排除环境的配置资源根目录使用单独的资源目录来指定 -->
+	            <excludes>  
+	                <exclude>test/*</exclude>  
+	                <exclude>production/*</exclude>  
+	                <exclude>development/*</exclude>  
+	            </excludes>  
+	        </resource>
+	        <resource>
+	        	<!-- 然后再加载使用单独的资源目录来指定 -->
+	            <directory>src/main/resources/${profiles.active}</directory>  
+	        </resource>  
+	    </resources>  
+	</build>
+
+	<profiles>
+		<profile>  
+	        <!-- 本地开发打包 -->  
+	        <id>development</id>  
+	        <properties>
+	        	<!-- 为该环境下的build指定参数赋值 -->
+	            <profiles.active>development</profiles.active>
+	            <deploy.url>http://host:port/manager/text</deploy.url>
+	        </properties>
+	        <activation>
+	        	<!-- 默认激活的（activeByDefault为true） -->
+	            <activeByDefault>true</activeByDefault>
+	        </activation>
+	    </profile>
+
+	</profiles>
+
+
+	<reporting>
+	    <outputDirectory>target/site</outputDirectory>
+	    <plugins>
+	        <plugin>
+	            <artifactId>maven-project-info-reports-plugin</artifactId>
+	            <version>2.0.1</version>
+	            <reportSets>
+	                <reportSet></reportSet>
+	            </reportSets>
+	        </plugin>
+<!-- 
+	        <plugin>  
+	            <groupId>org.codehaus.mojo</groupId>  
+	            <artifactId>cobertura-maven-plugin</artifactId>
+	            <version>2.5.2</version>  
+	            <configuration>  
+	                <formats>  
+	                    <format>html</format>
+	                    <format>xml</format> 
+	                </formats>  
+	            </configuration>  
+	        </plugin>   -->
+	    </plugins>
+	</reporting>
+
+	<properties>
+		<maven.compiler.source>1.7</maven.compiler.source>
+	</properties>
+
+</project>
