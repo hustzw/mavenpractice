@@ -127,19 +127,24 @@
 
 		<resources>  
 	        <resource>  
-	            <directory>src/main/resources</directory>  
+	            <directory>src/main/resources</directory>
+	            <!-- 在某个resource中如果设置filtering为true，将会根据输入参数动态修改相关内容。 -->
+                <filtering>true</filtering>
+
 	            <!-- 排除环境的配置资源根目录使用单独的资源目录来指定 -->
-	            <excludes>  
-	                <exclude>test/*</exclude>  
+	            <excludes>
 	                <exclude>production/*</exclude>  
 	                <exclude>development/*</exclude>  
 	            </excludes>  
 	        </resource>
-	        <resource>
+	        <!-- <resource> -->
 	        	<!-- 然后再加载使用单独的资源目录来指定 -->
-	            <directory>src/main/resources/${env}</directory>  
-	        </resource>  
-	    </resources>  
+	            <!-- <directory>src/main/resources/${env}</directory>   -->
+	        <!-- </resource>   -->
+	    </resources>
+	    <filters>
+            <filter>src/main/resources/${env}/build.properties</filter>
+        </filters>
 	</build>
 
 	<profiles>

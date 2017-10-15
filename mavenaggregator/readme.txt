@@ -1,1 +1,1 @@
-mvn package -Pproduction
+mvn clean package -Pproduction
