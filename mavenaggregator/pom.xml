@@ -126,7 +126,13 @@
 		<directory>target</directory>
 
 		<resources>  
-	        <resource>  
+	        <resource>
+	        	<!-- 
+                    资源文件位置src/main/resources/,这下面的资源文件的${}会全部被替换成filter中的标签内容。
+                    directory指定的value会作为classes的资源跟目录，
+                    比如指定:src/main/resources/，则classes下会出现jdbc等包，
+                    若指定:src/main/resources/jdbc/，则classes下直接出现jdbc包下的文件，不会额外出现jdbc等其他包结构。因为他把jdbc作为了根目录
+                -->
 	            <directory>src/main/resources</directory>
 	            <!-- 在某个resource中如果设置filtering为true，将会根据输入参数动态修改相关内容。 -->
                 <filtering>true</filtering>
