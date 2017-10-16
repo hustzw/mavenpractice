@@ -1,0 +1,70 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com</groupId>
+	<artifactId>projectear</artifactId>
+	<packaging>ear</packaging>
+	<version>${project.version}</version>
+	<name>another-project</name>
+	<url>http://maven.apache.org</url>
+
+	<parent>
+        <groupId>com</groupId>
+        <artifactId>mavenaggregator</artifactId>
+        <version>${project.version}</version>
+    </parent>
+
+    <dependencies>  
+        <dependency>  
+            <groupId>com</groupId>  
+            <artifactId>my-project</artifactId>  
+            <version>${project.version}</version>
+            <type>jar</type>  
+        </dependency>  
+  
+        <dependency>  
+            <groupId>com</groupId>  
+            <artifactId>another-project</artifactId>  
+            <version>${project.version}</version>
+            <type>jar</type>  
+        </dependency>  
+        <dependency>  
+            <groupId>com</groupId>  
+            <artifactId>webwar</artifactId>  
+            <version>${project.version}</version>
+            <type>war</type>  
+        </dependency>  
+    </dependencies>  
+
+    <build>  
+        <plugins>  
+            <plugin>  
+                <groupId>org.apache.maven.plugins</groupId>  
+                <artifactId>maven-ear-plugin</artifactId>  
+                <version>2.9</version>  
+                <configuration>  
+                    <packagingIncludes>META-INF/**,**/*.jar,**/*.war</packagingIncludes>  
+                    <modules>  
+                        <jarModule>  
+                            <groupId>com</groupId>  
+                            <artifactId>another-project</artifactId>  
+                            <includeInApplicationXml>true</includeInApplicationXml>  
+                        </jarModule>  
+                        <jarModule>  
+                            <groupId>com</groupId>  
+                            <artifactId>my-project</artifactId>  
+                            <includeInApplicationXml>true</includeInApplicationXml>  
+                        </jarModule>  
+                        <webModule>  
+                            <groupId>com</groupId>  
+                            <artifactId>webwar</artifactId>  
+                        </webModule>  
+                    </modules>
+  
+                </configuration>  
+  
+            </plugin>  
+        </plugins>  
+    </build>  
+
+</project>

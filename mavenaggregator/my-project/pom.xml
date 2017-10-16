@@ -4,14 +4,43 @@
 	<groupId>com</groupId>
 	<artifactId>my-project</artifactId>
 	<packaging>jar</packaging>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>${project.version}</version>
 	<name>my-project</name>
 	<url>http://maven.apache.org</url>
 
 	<parent>
         <groupId>com</groupId>
         <artifactId>mavenaggregator</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>${project.version}</version>
     </parent>
+
+    <build>
+		<resources>  
+	        <resource>
+	        	<!-- 
+                    资源文件位置src/main/resources/,这下面的资源文件的${}会全部被替换成filter中的标签内容。
+                    directory指定的value会作为classes的资源跟目录，
+                    比如指定:src/main/resources/，则classes下会出现jdbc等包，
+                    若指定:src/main/resources/jdbc/，则classes下直接出现jdbc包下的文件，不会额外出现jdbc等其他包结构。因为他把jdbc作为了根目录
+                -->
+	            <directory>src/main/resources</directory>
+	            <!-- 在某个resource中如果设置filtering为true，将会根据输入参数动态修改相关内容。 -->
+                <filtering>true</filtering>
+
+	            <!-- 排除环境的配置资源根目录使用单独的资源目录来指定 -->
+	            <excludes>
+	                <exclude>production/*</exclude>  
+	                <exclude>development/*</exclude>  
+	            </excludes>  
+	        </resource>
+	        <!-- <resource> -->
+	        	<!-- 然后再加载使用单独的资源目录来指定 -->
+	            <!-- <directory>src/main/resources/${env}</directory>   -->
+	        <!-- </resource>   -->
+	    </resources>
+	    <filters>
+            <filter>src/main/resources/${env}/build.properties</filter>
+        </filters>
+	</build>
 
 </project>
